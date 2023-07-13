@@ -53,6 +53,6 @@ export const fetchContent = async (prompt) => {
   };
 
   const res = await axios(config);
-
-  return res.data.choices[0].message.content;
+  console.log(res.data.choices, "-------------");
+  return res;
 };

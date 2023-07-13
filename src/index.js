@@ -1,9 +1,10 @@
 import express from "express";
 import { fetchContent, generateImage } from "./gpt.js";
-
+import cors from "cors";
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 function getCaptionFromChatResponse(chatResponseObject) {
   const captionMatch = chatResponseObject.match(/Caption:(.*)(?:\n|$)/);
   if (!captionMatch) {
@@ -11,13 +12,15 @@ function getCaptionFromChatResponse(chatResponseObject) {
   }
   return captionMatch[1].trim();
 }
-app.get("/", async (req, res) => {
+app.post("/", async (req, res) => {
   const { option = "a wizard enters a jungle" } = req.body;
   const result = await fetchContent(option);
-  const gt = getCaptionFromChatResponse(result);
-  const image = await generateImage(gt, result);
-  console.log(image, "image");
-  res.json({ content: result, image });
+  const x = result.data.choices[0].message.content;
+  //   const gt = getCaptionFromChatResponse(x);
+  //   const image = await generateImage(gt, result);
+  //   console.log(result.data.choices, "image");
+  //   res.json(result);
+  res.send({ result: result.data.choices[0].message });
 });
 
 const port = 8000;
